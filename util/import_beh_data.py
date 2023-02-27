@@ -114,10 +114,24 @@ class Session():
             #stage = np.array([float((tl.split('ST:')[1]).split()[0]) for tl in trial_lines]) #stage number
             proba_choosed = np.array([float((tl.split('CH:')[1]).split()[0]) for tl in trial_lines]) #proba corresponding to the poke choosed in that trial
 
+            prob_high = [(tl.split('HP:')[1]).split()[0] for tl in trial_lines] #higher of the available reward probabilities
+            prob_low = [(tl.split('LP:')[1]).split()[0] for tl in trial_lines] #lower of the available reward probabilities
+            
+            for i in range(len(prob_high)):
+                if prob_high[i] == 'None':
+                    prob_high[i] = np.nan
+                    prob_low[i] = np.nan
+                else:
+                    prob_high[i] = float(prob_high[i])
+                    prob_low[i] = float(prob_low[i])
+
+            prob_high = np.array(prob_high)
+            prob_low = np.array(prob_low)
+
             mov_average = np.array([[float(s) for s in tl.split('HIGH:', 1)[1].split()[0].split()] for tl in trial_lines])
 
             self.trial_data = {'choices': choices, 'outcomes': outcomes,
-                           'free_choice': free_choice, 'proba_choosed': proba_choosed,
+                           'free_choice': free_choice, 'prob_high': prob_high, 'prob_low': prob_low, 'proba_choosed': proba_choosed,
                            'mov_average': mov_average} #dict can be called to retrieve array of choices, outcomes etc..               
             self.n_trials = len(choices)
             self.rewards  = sum(outcomes)
