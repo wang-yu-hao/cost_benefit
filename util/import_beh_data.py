@@ -59,7 +59,9 @@ class Session():
         self.stage           = float(next(line for line in initial_variable if 'stage' in line).split()[1])
         self.store_probas    = next(line for line in initial_variable if 'store_probas' in line).split("[")[1] #Retrieve the line with probas
         self.store_probas    = self.store_probas.split("]")[0]
-        self.store_probas    = self.store_probas.split(",")
+        self.store_probas    = self.store_probas.split(" ")
+        self.store_probas[0] = self.store_probas[0].split(',')[0]
+        self.store_probas[1] = self.store_probas[1].split(',')[0]
         self.no_choice       = int(next(line for line in initial_variable if 'n_no_choice' in line).split()[1]) #Variable no_choice is the number of aborted trials
         
         if int_subject_IDs: # Convert subject ID string to integer.
@@ -117,16 +119,16 @@ class Session():
             prob_high = [(tl.split('HP:')[1]).split()[0] for tl in trial_lines] #higher of the available reward probabilities
             prob_low = [(tl.split('LP:')[1]).split()[0] for tl in trial_lines] #lower of the available reward probabilities
             
-            for i in range(len(prob_high)):
-                if prob_high[i] == 'None':
-                    prob_high[i] = np.nan
-                    prob_low[i] = np.nan
-                else:
-                    prob_high[i] = float(prob_high[i])
-                    prob_low[i] = float(prob_low[i])
+            # for i in range(len(prob_high)):
+            #     if prob_high[i] == 'None':
+            #         prob_high[i] = np.nan
+            #         prob_low[i] = np.nan
+            #     else:
+            #         prob_high[i] = prob_high[i]
+            #         prob_low[i] = prob_low[i]
 
-            prob_high = np.array(prob_high)
-            prob_low = np.array(prob_low)
+            # prob_high = np.array(prob_high)
+            # prob_low = np.array(prob_low)
 
             mov_average = np.array([[float(s) for s in tl.split('HIGH:', 1)[1].split()[0].split()] for tl in trial_lines])
 

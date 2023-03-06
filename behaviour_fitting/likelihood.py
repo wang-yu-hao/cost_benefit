@@ -21,13 +21,16 @@ def rw(sessions, Q_0, alpha, e):
     Q_table = []
     p_table = []
 
+    Q = [Q_0, Q_0, Q_0] # L, U, R
+
     for sesh in sessions: # Iterate over sessions
 
         Q_list = [] # Temp. storage
         p_list = []
-        Q = {'1.0': Q_0, '0.5': Q_0, '0.2': Q_0} # Initial Q values before each session
+        # Q = {'1.0': Q_0, '0.5': Q_0, '0.2': Q_0} # Initial Q values before each session
 
         td = sesh.trial_data
+        contingencies = sesh.store_probas # L, U, R
 
         for t in range(len(td['choices'])): # Iterate over trials in a session
 
@@ -37,14 +40,14 @@ def rw(sessions, Q_0, alpha, e):
 
             else:
                 
-                p = stats.norm.cdf((2 * Q[str(td['proba_choosed'][t])] - Q[str(td['prob_high'][t])] - Q[str(td['prob_low'][t])])/(2**0.5 * e))
+                p = stats.norm.cdf((2 * Q[td['choices'][t]-1] - Q[contingencies.index(td['prob_high'][t])] - Q[contingencies.index(td['prob_low'][t])])/(2**0.5 * e))
 
                 # p = np.exp(beta * Q[str(td['proba_choosed'][t])]) / (np.exp(beta * Q[str(td['prob_high'][t])]) + np.exp(beta * Q[str(td['prob_low'][t])])) # Model predicted probability of the action taken
 
-            delta = td['outcomes'][t] - Q[str(td['proba_choosed'][t])] # RPE
-            Q[str(td['proba_choosed'][t])] += alpha * delta # R-W belief update
+            delta = td['outcomes'][t] - Q[td['choices'][t]-1] # RPE
+            Q[td['choices'][t]-1] += alpha * delta # R-W belief update
 
-            Q_list.append(list(Q.values()))
+            Q_list.append(Q)
             p_list.append(p)
 
             L += -np.log(p)
