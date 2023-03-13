@@ -20,6 +20,7 @@ def rw(sessions, Q_0, alpha, e):
     # Storage for latent variables and choice probabilities:
     Q_table = []
     p_table = []
+    delta_table = []
 
     Q = [Q_0, Q_0, Q_0] # L, U, R
 
@@ -27,6 +28,7 @@ def rw(sessions, Q_0, alpha, e):
 
         Q_list = [] # Temp. storage
         p_list = []
+        delta_list = []
         # Q = {'1.0': Q_0, '0.5': Q_0, '0.2': Q_0} # Initial Q values before each session
 
         td = sesh.trial_data
@@ -49,14 +51,16 @@ def rw(sessions, Q_0, alpha, e):
 
             Q_list.append(Q)
             p_list.append(p)
+            delta_list.append(delta)
 
             L += -np.log(p)
 
         Q_table.append(Q_list)
         p_table.append(p_list)
+        delta_table.append(delta_list)
 
     # Q_table = np.array(Q_table)
     # p_table = np.array(p_table)
 
 
-    return [L, Q_table, p_table]
+    return [L, Q_table, p_table, delta_table]
